@@ -1,24 +1,21 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:task_manager/ui/screens/forgot_password_verify_email_screen.dart';
-import 'package:task_manager/ui/screens/register_screen.dart';
+import 'package:task_manager/ui/screens/login_screen.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 
-import '../utils/asstes_path.dart';
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailTextEditingController =
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+  final TextEditingController _passwordNewEditingController =
       TextEditingController();
-  final TextEditingController _passwordTextEditingController =
+  final TextEditingController _passwordConfirmEditingController =
       TextEditingController();
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -35,39 +32,43 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 80,
                 ),
                 Text(
-                  'Get Started With',
+                  'Reset Password',
                   style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(
+                  height: 3,
+                ),
+                Text(
+                  'Set a password minimum length of 6 letters.',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.grey,
+                      ),
                 ),
                 const SizedBox(
                   height: 24,
                 ),
                 TextFormField(
+                  controller: _passwordNewEditingController,
                   textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.emailAddress,
-                  controller: _emailTextEditingController,
                   decoration: InputDecoration(
-                    hintText: 'Email',
+                    hintText: 'New Password',
                   ),
                 ),
                 SizedBox(
                   height: 8,
                 ),
                 TextFormField(
-                  controller: _passwordTextEditingController,
-                  obscureText: true,
+                  controller: _passwordConfirmEditingController,
                   decoration: InputDecoration(
-                    hintText: 'Password',
+                    hintText: 'Confirm New Password',
                   ),
                 ),
                 SizedBox(
                   height: 16,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
-                  child: Icon(
-                    Icons.arrow_circle_right_outlined,
-                    color: Colors.white,
-                  ),
+                  onPressed: _onTapSubmitButton,
+                  child: Text('Confirm'),
                 ),
                 SizedBox(
                   height: 32,
@@ -77,10 +78,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextButton(
-                        onPressed: _onTapForgotPassButton,
-                        child: Text("Forgot Password?"),
-                      ),
                       RichText(
                         text: TextSpan(
                           style: TextStyle(
@@ -89,9 +86,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: 14,
                           ),
                           children: [
-                            TextSpan(text: "Don't have account? "),
+                            TextSpan(text: "Have account? "),
                             TextSpan(
-                              text: "Sign Up",
+                              text: "Sign In",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.greenAccent,
@@ -113,21 +110,31 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _onTapForgotPassButton() {
-    Navigator.push(
+  void _onTapSignUpButton() {
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        builder: (context) => ForgotPasswordVerifyScreen(),
+        builder: (context) => LoginScreen(),
       ),
+          (pre) => false,
     );
   }
 
-  void _onTapSignUpButton() {
-    Navigator.push(
+  void _onTapSubmitButton() {
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        builder: (context) => const RegisterScreen(),
+        builder: (context) => LoginScreen(),
       ),
+          (pre) => false,
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _passwordNewEditingController.dispose();
+    _passwordConfirmEditingController.dispose();
+    super.dispose();
   }
 }

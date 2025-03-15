@@ -1,24 +1,21 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:task_manager/ui/screens/forgot_password_verify_email_screen.dart';
-import 'package:task_manager/ui/screens/register_screen.dart';
+import 'package:task_manager/ui/screens/pin_verification_screen.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 
-import '../utils/asstes_path.dart';
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ForgotPasswordVerifyScreen extends StatefulWidget {
+  const ForgotPasswordVerifyScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ForgotPasswordVerifyScreen> createState() =>
+      _ForgotPasswordVerifyScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgotPasswordVerifyScreenState
+    extends State<ForgotPasswordVerifyScreen> {
   final TextEditingController _emailTextEditingController =
       TextEditingController();
-  final TextEditingController _passwordTextEditingController =
-      TextEditingController();
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -35,8 +32,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 80,
                 ),
                 Text(
-                  'Get Started With',
+                  'Your Email Address',
                   style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 3,),
+                Text(
+                  'A 6 digits verification code will be sent to your email.',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.grey,
+                      ),
                 ),
                 const SizedBox(
                   height: 24,
@@ -50,20 +54,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: 8,
-                ),
-                TextFormField(
-                  controller: _passwordTextEditingController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: 'Password',
-                  ),
-                ),
-                SizedBox(
                   height: 16,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: _onTapSubmitButton,
                   child: Icon(
                     Icons.arrow_circle_right_outlined,
                     color: Colors.white,
@@ -77,10 +71,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextButton(
-                        onPressed: _onTapForgotPassButton,
-                        child: Text("Forgot Password?"),
-                      ),
                       RichText(
                         text: TextSpan(
                           style: TextStyle(
@@ -89,9 +79,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: 14,
                           ),
                           children: [
-                            TextSpan(text: "Don't have account? "),
+                            TextSpan(text: "Have account? "),
                             TextSpan(
-                              text: "Sign Up",
+                              text: "Sign In",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.greenAccent,
@@ -113,21 +103,16 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _onTapForgotPassButton() {
+  void _onTapSubmitButton() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ForgotPasswordVerifyScreen(),
+        builder: (context) => PinVerification(),
       ),
     );
   }
 
   void _onTapSignUpButton() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const RegisterScreen(),
-      ),
-    );
+    Navigator.pop(context);
   }
 }

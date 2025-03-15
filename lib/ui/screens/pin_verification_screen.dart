@@ -1,24 +1,20 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:task_manager/ui/screens/forgot_password_verify_email_screen.dart';
-import 'package:task_manager/ui/screens/register_screen.dart';
+import 'package:task_manager/ui/screens/login_screen.dart';
+import 'package:task_manager/ui/screens/reset_password.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 
-import '../utils/asstes_path.dart';
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class PinVerification extends StatefulWidget {
+  const PinVerification({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<PinVerification> createState() => _PinVerificationState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailTextEditingController =
-      TextEditingController();
-  final TextEditingController _passwordTextEditingController =
-      TextEditingController();
+class _PinVerificationState extends State<PinVerification> {
+  final TextEditingController _pinEditingController = TextEditingController();
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -35,39 +31,47 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 80,
                 ),
                 Text(
-                  'Get Started With',
+                  'Pin Verification',
                   style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(
+                  height: 3,
+                ),
+                Text(
+                  'A 6 digits verification code has been sent to your email.',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.grey,
+                      ),
                 ),
                 const SizedBox(
                   height: 24,
                 ),
-                TextFormField(
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.emailAddress,
-                  controller: _emailTextEditingController,
-                  decoration: InputDecoration(
-                    hintText: 'Email',
+                PinCodeTextField(
+                  length: 6,
+                  obscureText: false,
+                  animationType: AnimationType.fade,
+                  pinTheme: PinTheme(
+                    shape: PinCodeFieldShape.box,
+                    borderRadius: BorderRadius.circular(5),
+                    fieldHeight: 50,
+                    fieldWidth: 40,
+                    activeFillColor: Colors.white,
+                    selectedFillColor: Colors.white,
+                    inactiveFillColor: Colors.white,
                   ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                TextFormField(
-                  controller: _passwordTextEditingController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: 'Password',
-                  ),
+                  animationDuration: Duration(milliseconds: 300),
+                  backgroundColor: Colors.transparent,
+                  enableActiveFill: true,
+                  controller: _pinEditingController,
+                  appContext: context,
+                  keyboardType: TextInputType.number,
                 ),
                 SizedBox(
                   height: 16,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
-                  child: Icon(
-                    Icons.arrow_circle_right_outlined,
-                    color: Colors.white,
-                  ),
+                  onPressed: _onTapSubmitButton,
+                  child: Text('Verify'),
                 ),
                 SizedBox(
                   height: 32,
@@ -77,10 +81,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextButton(
-                        onPressed: _onTapForgotPassButton,
-                        child: Text("Forgot Password?"),
-                      ),
                       RichText(
                         text: TextSpan(
                           style: TextStyle(
@@ -89,9 +89,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: 14,
                           ),
                           children: [
-                            TextSpan(text: "Don't have account? "),
+                            TextSpan(text: "Have account? "),
                             TextSpan(
-                              text: "Sign Up",
+                              text: "Sign In",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.greenAccent,
@@ -113,21 +113,29 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _onTapForgotPassButton() {
+  void _onTapSignUpButton() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginScreen(),
+      ),
+      (pre) => false,
+    );
+  }
+
+  void _onTapSubmitButton() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ForgotPasswordVerifyScreen(),
+        builder: (context) => ResetPasswordScreen(),
       ),
     );
   }
 
-  void _onTapSignUpButton() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const RegisterScreen(),
-      ),
-    );
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _pinEditingController.dispose();
+    super.dispose();
   }
 }
