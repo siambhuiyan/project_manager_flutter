@@ -10,6 +10,9 @@ class TaskManagerApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorSchemeSeed: Colors.green,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.green,  // This sets the AppBar color
+        ),
         inputDecorationTheme: InputDecorationTheme(
           hintStyle: TextStyle(
             fontWeight: FontWeight.w400,
