@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:task_manager/ui/screens/add_screen.dart';
 import '../widgets/status_board.dart';
 import '../widgets/task_manage_message.dart';
 
@@ -8,15 +8,13 @@ class NewTaskScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(top: 10.0),
-        child: Column(
-          children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Column(
+            children: [
+              Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 10),
                 child: Row(
                   children: [
@@ -52,18 +50,36 @@ class NewTaskScreen extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TaskManageMessage(),
-            TaskManageMessage(),
-
-          ],
+              SizedBox(
+                height: 20,
+              ),
+              ListView.separated(
+                itemBuilder: (context, index) {
+                  return TaskManageMessage(
+                    chipText: 'New',
+                    chipColor: Color(0xffE07A5F),
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return SizedBox(
+                      // height: 10,
+                      );
+                },
+                itemCount: 10,
+                primary: false,
+                shrinkWrap: true,
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddScreen()),
+          );
+        },
         child: Icon(
           Icons.add,
           color: Colors.white,
@@ -72,5 +88,3 @@ class NewTaskScreen extends StatelessWidget {
     );
   }
 }
-
-

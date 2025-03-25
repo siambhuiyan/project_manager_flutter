@@ -1,0 +1,2 @@
+D:/siam/Project/flutter/task_manager/android/app/.cxx/Debug/w2k5d4h1/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/siam/Project/flutter/task_manager/android/app/.cxx/Debug/w2k5d4h1/armeabi-v7a/CMakeFiles/rebuild_cache.dir

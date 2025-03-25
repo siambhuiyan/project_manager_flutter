@@ -11,7 +11,7 @@ class TaskManagerApp extends StatelessWidget {
       theme: ThemeData(
         colorSchemeSeed: Colors.green,
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.green,  // This sets the AppBar color
+          backgroundColor: Colors.green, // This sets the AppBar color
         ),
         inputDecorationTheme: InputDecorationTheme(
           hintStyle: TextStyle(

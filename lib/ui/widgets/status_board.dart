@@ -6,9 +6,9 @@ class StatusBoard extends StatelessWidget {
   final Color taskNumColor;
   const StatusBoard(
       {super.key,
-        required this.taskNum,
-        required this.taskSubText,
-        required this.taskNumColor});
+      required this.taskNum,
+      required this.taskSubText,
+      required this.taskNumColor});
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +36,8 @@ class StatusBoard extends StatelessWidget {
           ),
           Text(
             taskSubText,
-            style: text.bodyLarge?.copyWith(
-              color: taskNumColor,
-              fontWeight: FontWeight.bold
-            ),
+            style: text.bodyLarge
+                ?.copyWith(color: taskNumColor, fontWeight: FontWeight.bold),
           ),
         ],
       ),
