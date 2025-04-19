@@ -1,11 +1,16 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:task_manager/ui/screens/forgot_password_verify_email_screen.dart';
 import 'package:task_manager/ui/screens/register_screen.dart';
+import 'package:task_manager/ui/widgets/center_circular_progress_indicator.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 
+import '../../data/service/network_client.dart';
+import '../../data/utils/urls.dart';
 import '../utils/asstes_path.dart';
+import '../widgets/snack_bar_message.dart';
 import 'bottom_nav_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -21,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordTextEditingController =
       TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _signInProgress = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Form(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,6 +56,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     hintText: 'Email',
                   ),
+                  validator: (String? value) {
+                    String email = value?.trim() ?? '';
+                    if (EmailValidator.validate(email) == false) {
+                      return 'please enter a valid email';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(
                   height: 8,
@@ -59,15 +73,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     hintText: 'Password',
                   ),
+                  validator: (String? value) {
+                    final RegExp passwordRegex =
+                        RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
+
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your password';
+                    } else if (!passwordRegex.hasMatch(value)) {
+                      return 'Password must be at least 6 characters and include letters and numbers';
+                    }
+
+                    return null;
+                  },
                 ),
                 SizedBox(
                   height: 16,
                 ),
-                ElevatedButton(
-                  onPressed:_onTapSignInButton,
-                  child: Icon(
-                    Icons.arrow_circle_right_outlined,
-                    color: Colors.white,
+                Visibility(
+                  visible: _signInProgress == false,
+                  replacement: CenterCircularProgressIndicator(),
+                  child: ElevatedButton(
+                    onPressed: _onTapSignInButton,
+                    child: Icon(
+                      Icons.arrow_circle_right_outlined,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -133,11 +163,34 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onTapSignUpButton() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const RegisterScreen(),
-      ),
-    );
+    if(_formKey.currentState!.validate()){
+    _login();
+    }
+  }
+
+  Future<void> _login() async {
+    _signInProgress = true;
+    setState(() {});
+    Map<String, dynamic> requestBody = {
+      'email': _emailTextEditingController.text.trim(),
+      'password': _passwordTextEditingController.text.trim(),
+    };
+    NetworkResponse response =
+        await NetworkClient.postRequest(url: Urls.logInUrl, body: requestBody);
+
+    _signInProgress = false;
+    setState(() {});
+
+    if (response.isSuccess) {
+      showSnackBar(context, 'logged in');
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const RegisterScreen(),
+        ),
+      );
+    } else {
+      showSnackBar(context, response.errorMessage, true);
+    }
   }
 }

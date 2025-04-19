@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:task_manager/data/service/network_client.dart';
 import 'package:task_manager/ui/screens/login_screen.dart';
+import 'package:task_manager/ui/widgets/center_circular_progress_indicator.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 import 'package:task_manager/ui/widgets/snack_bar_message.dart';
 
@@ -150,7 +151,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   Visibility(
                     visible: _registrationInProgress == false,
-                    replacement: Center(child: CircularProgressIndicator(),),
+                    replacement: CenterCircularProgressIndicator(),
                     child: ElevatedButton(
                       onPressed: _onTapSubmit,
                       child: Icon(
@@ -224,13 +225,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (response.isSuccess) {
       showSnackBar(context, 'User registered successfully!');
+      _clearTextField();
     } else {
-      showSnackBar(context, response.errorMessage,true);
+      showSnackBar(context, response.errorMessage, true);
     }
   }
 
   void _onTapSignInButton() {
     Navigator.pop(context);
+  }
+
+  void _clearTextField() {
+    _emailTextEditingController.clear();
+    _firstNameTextEditingController.clear();
+    _lastNameTextEditingController.clear();
+    _passwordTextEditingController.clear();
+    _mobileTextEditingController.clear();
   }
 
   @override
