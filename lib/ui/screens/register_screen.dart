@@ -1,9 +1,13 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:task_manager/data/service/network_client.dart';
 import 'package:task_manager/ui/screens/login_screen.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
+import 'package:task_manager/ui/widgets/snack_bar_message.dart';
 
+import '../../data/utils/urls.dart';
 import '../utils/asstes_path.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -27,6 +31,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  bool _registrationInProgress = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Form(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,6 +63,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: InputDecoration(
                       hintText: 'Email',
                     ),
+                    validator: (String? value) {
+                      String email = value?.trim() ?? '';
+                      if (EmailValidator.validate(email) == false) {
+                        return 'please enter a valid email';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(
                     height: 8,
@@ -66,6 +80,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: InputDecoration(
                       hintText: 'First Name',
                     ),
+                    validator: (String? value) {
+                      if (value?.trim().isEmpty ?? true) {
+                        return 'please enter a valid first name';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(
                     height: 8,
@@ -76,6 +96,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: InputDecoration(
                       hintText: 'Last Name',
                     ),
+                    validator: (String? value) {
+                      if (value?.trim().isEmpty ?? true) {
+                        return 'please enter a valid last name';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(
                     height: 8,
@@ -87,6 +113,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: InputDecoration(
                       hintText: 'Mobile',
                     ),
+                    validator: (String? value) {
+                      String mobile = value?.trim() ?? '';
+                      final RegExp bdPhoneRegex =
+                          RegExp(r'^(?:\+8801|01)[3-9]\d{8}$');
+                      if (bdPhoneRegex.hasMatch(mobile) == false) {
+                        return 'please enter a valid mobile';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(
                     height: 8,
@@ -97,15 +132,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: InputDecoration(
                       hintText: 'Password',
                     ),
+                    validator: (String? value) {
+                      final RegExp passwordRegex =
+                          RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
+
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      } else if (!passwordRegex.hasMatch(value)) {
+                        return 'Password must be at least 6 characters and include letters and numbers';
+                      }
+
+                      return null;
+                    },
                   ),
                   SizedBox(
                     height: 16,
                   ),
-                  ElevatedButton(
-                    onPressed: _onTapSubmit,
-                    child: Icon(
-                      Icons.arrow_circle_right_outlined,
-                      color: Colors.white,
+                  Visibility(
+                    visible: _registrationInProgress == false,
+                    replacement: Center(child: CircularProgressIndicator(),),
+                    child: ElevatedButton(
+                      onPressed: _onTapSubmit,
+                      child: Icon(
+                        Icons.arrow_circle_right_outlined,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -149,7 +200,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void _onTapSubmit(){}
+  void _onTapSubmit() {
+    if (_formKey.currentState!.validate()) {
+      _registerUser();
+    }
+  }
+
+  Future<void> _registerUser() async {
+    _registrationInProgress = true;
+    setState(() {});
+    Map<String, dynamic> requestBody = {
+      'email': _emailTextEditingController.text.trim(),
+      'firsName': _firstNameTextEditingController.text.trim(),
+      'lastName': _lastNameTextEditingController.text.trim(),
+      'mobile': _mobileTextEditingController.text.trim(),
+      'password': _passwordTextEditingController.text.trim(),
+    };
+    NetworkResponse response = await NetworkClient.postRequest(
+        url: Urls.registerUrl, body: requestBody);
+
+    _registrationInProgress = false;
+    setState(() {});
+
+    if (response.isSuccess) {
+      showSnackBar(context, 'User registered successfully!');
+    } else {
+      showSnackBar(context, response.errorMessage,true);
+    }
+  }
 
   void _onTapSignInButton() {
     Navigator.pop(context);
