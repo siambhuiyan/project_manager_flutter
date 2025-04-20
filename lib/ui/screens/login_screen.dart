@@ -2,6 +2,8 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:task_manager/data/models/login_model.dart';
+import 'package:task_manager/ui/controller/auth_controller.dart';
 import 'package:task_manager/ui/screens/forgot_password_verify_email_screen.dart';
 import 'package:task_manager/ui/screens/register_screen.dart';
 import 'package:task_manager/ui/widgets/center_circular_progress_indicator.dart';
@@ -163,8 +165,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onTapSignUpButton() {
-    if(_formKey.currentState!.validate()){
-    _login();
+    if (_formKey.currentState!.validate()) {
+      _login();
     }
   }
 
@@ -182,6 +184,13 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {});
 
     if (response.isSuccess) {
+      LoginModel loginModel = LoginModel.fromJson(response.data!);
+      //TODO: save token to local
+      AuthController.saveUserInformation(
+          loginModel.token, loginModel.userModel);
+      //TODO: local database setup
+      //TODO: logged in or not
+
       showSnackBar(context, 'logged in');
       Navigator.push(
         context,

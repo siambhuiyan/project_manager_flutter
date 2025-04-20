@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager/ui/controller/auth_controller.dart';
+import 'package:task_manager/ui/screens/login_screen.dart';
 import 'package:task_manager/ui/screens/update_profile_screen.dart';
 
 class TMAppBar extends StatelessWidget implements PreferredSize {
   const TMAppBar({
-    super.key, this.profile,
+    super.key,
+    this.profile,
   });
   final bool? profile;
 
@@ -15,11 +18,16 @@ class TMAppBar extends StatelessWidget implements PreferredSize {
         color: Colors.white,
       ),
       title: GestureDetector(
-        onTap: (){
-          if(profile==true){
+        onTap: () {
+          if (profile == true) {
             return;
           }
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>UpdateProfileScreen(),),);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UpdateProfileScreen(),
+            ),
+          );
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -32,12 +40,12 @@ class TMAppBar extends StatelessWidget implements PreferredSize {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Siam Bhuiyan',
+                  Text(AuthController.userModel?.userName ?? '',
                       style: text.bodyLarge?.copyWith(
                         color: Colors.white,
                       )),
                   Text(
-                    'asadsiam588@gmail.com',
+                    AuthController.userModel?.email ?? '',
                     style: text.bodySmall?.copyWith(
                       color: Colors.white,
                     ),
@@ -45,15 +53,26 @@ class TMAppBar extends StatelessWidget implements PreferredSize {
                 ],
               ),
             ),
-            Icon(
-              Icons.logout,
-              size: 30,
-              color: Colors.white,
+            IconButton(
+              icon: Icon(
+                Icons.logout,
+                size: 30,
+                color: Colors.white,
+              ),
+              onPressed: () => _onTapLogout,
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _onTapLogout(BuildContext context) async {
+    await AuthController.clearUserInfo();
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+        (predicate) => false);
   }
 
   @override
@@ -63,5 +82,4 @@ class TMAppBar extends StatelessWidget implements PreferredSize {
   @override
   // TODO: implement preferredSize
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
-
 }
