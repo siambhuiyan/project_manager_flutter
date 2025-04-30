@@ -87,4 +87,8 @@ class NewTaskScreen extends StatelessWidget {
       ),
     );
   }
+
+  Future<void>_getAllNewTask() async{
+
+}
 }
